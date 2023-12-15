@@ -1,0 +1,8 @@
+*.exe
+*.o
+bin/
+temp_file/
+log_path/
+backpack/
+root_path/
+test/
