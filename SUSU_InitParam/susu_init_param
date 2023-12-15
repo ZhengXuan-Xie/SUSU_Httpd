@@ -1,0 +1,58 @@
+#ifndef SUSU_INIT_PARAM
+#define SUSU_INIT_PARAM
+
+#include <queue>
+#include <mutex>
+
+#include <fstream>
+
+#include<ctime>
+#include<stdio.h>
+
+#include <unordered_map>
+using std::unordered_map;
+using std::string;
+using std::pair;
+#include <iostream>
+#include <string.h>
+
+namespace susu_tools{
+
+class susu_init_param{
+public:
+    static susu_init_param* get_Init_Param();
+    static ::std::mutex init_mutex;
+    
+    int load_init_param(const char* str);  //加载参数
+    void init_param_print();    //在stdout上打印1次启动参数
+
+    /*没有必要把这两个get函数改成字符串引用*/
+    /*在我的机器上，2千万次get的消耗是400ms，改成引用之后是320ms。但是改成引用之后会在编码时产生麻烦，不如不改。*/
+    string get_string_value(string key){
+        if(string_param_kv.find(key) != string_param_kv.end())
+        {
+            return string_param_kv[key];
+        }
+    };
+
+    int get_int_value(string key){
+        if(int_param_kv.find(key) != int_param_kv.end())
+        {
+            return int_param_kv[key];
+        }
+    };
+
+    //加载启动参数时，log打印对象并没有被建立，且此时也缺少建立log打印对象的参数，因此单独实现一个log打印函数
+    void print_a_log_line(const char* str)
+    {
+        perror(str);   //打印到标准错误流上
+    };
+
+private:
+    unordered_map<string,string> string_param_kv;
+    unordered_map<string,int> int_param_kv;
+    susu_init_param();
+    ~susu_init_param();
+};
+}
+#endif
