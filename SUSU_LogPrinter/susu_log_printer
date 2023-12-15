@@ -1,0 +1,76 @@
+#ifndef SUSU_LOG_PRINTER
+#define SUSU_LOG_PRINTER
+
+#include <queue>
+using std::queue;
+
+#include <unordered_map>
+using std::unordered_map;
+using std::string;
+#include <map>
+using std::map;
+
+
+#include <mutex>
+using std::mutex;
+
+#include <functional>
+
+//一行Log最多4*1024个字节
+#define line_bytes 4*1024
+//当存储数量达到了1024行log再一次性打印
+#define print_limit 32
+
+#include <fstream>
+#include <atomic>
+#include <thread>
+#include <pthread.h>
+
+#include<ctime>
+#include<stdio.h>
+namespace susu_tools{
+
+class Log_Object{
+public:
+    string head; //一行log的头部，主要存储时间信息
+    queue<string> log_queue;
+    //写入任务队列，当一个对象要求写入，则构造一个任务插入到任务队列中，由写入线程完成写入。
+    
+    ::std::queue< ::std::function<void(queue<string>&&)> > task_queue;  //lambda function task
+    queue<queue<string>> log_part;
+};
+
+class Log_Printer{
+public:
+    static Log_Printer* get_Log_Printer();
+    static ::std::mutex init_mutex;
+    static ::std::mutex log_object_init_lock; //创建log对象时的锁
+    Log_Object& get_thread_object();//根据线程号，获得对应的log队列，若还不存在就创建1个队列
+    int init_thread_object();   //针对每个线程来构造对象
+    int release_thread_object();    //针对每个线程来构造对象
+    int get_thread_int();   //测试一下
+
+    int print_a_line(int level,string& line);
+    void print_immediately();   //马上手动执行1次打印，一般用于清空所有待打印的log。
+    int write_to_file();
+
+
+    void set_path(string path){log_path = path;}
+    string get_path(string path){return log_path;}
+    void set_print_level(int n){print_level = n;}
+    int get_print_level(){return print_level;}
+
+private:
+    string file; //指向log文件名的字符串
+    mutex write_mutex; //写入锁
+
+    map<pthread_t,Log_Object> thread_log_map;
+
+    string log_path;
+    Log_Printer();
+    ~Log_Printer();
+    int print_level;
+};
+}
+#endif
+
