@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <ctype.h>
+
+#include <sys/socket.h>
+
+#define line_limit 1024
+
+#include <unordered_map>
+using std::unordered_map;
+using std::pair;
+
+#include <iostream>
+using std::string;
+
+#include "../SUSU_LogPrinter/susu_log_printer"
+#include "../SUSU_InitParam/susu_init_param"
+
+#define SERVER_STRING "Server: susu_httpd\r\n"
+
+using namespace susu_tools;
+
+namespace susu_tools{
+
+class susu_http_object{
+public:
+    void get_request_and_header(int fd);//解析http请求的头部
+    int get_a_line(int sock, char *buf, int size);//这个函数用于读取http包的一行,该行必须以\r\n结尾
+    bool check_all_space(char* str); //检查一行是否全为空格
+    void process(int fd);   //根据之前读到的信息，对这个描述符进行处理
+    void clear_head_body(); //清除当前的method url version  键值对  body
+    bool str_end_with(char* input,char* end);  //检查某个字符串A 是否以 某个字符串B结尾
+    void run_get(int fd,char* script_name,char* filename,const char* type);    //执行post脚本
+    
+    void run_get_text(int fd,char* script_name,char* url,char* type);    //执行get_text(filename,type)脚本
+
+    //以下的设计略显复杂，考虑废除
+    /*int get_line(int sock, char *buf, int size);    //这个函数用于读取http包的第一行
+    void get_head(int fd);  //传入1个文件描述符，不断读取，直到读取到限制或者遇到空行
+
+
+    //以后这些东西还要加上错误码，需要一个html格式
+    void unimplemented(int fd);   //未实现的接口
+    void only_http_one_point_one(int fd);   //只支持http1.1,即长连接
+    void download_not_allow(int fd);   //下载不允许
+    void no_such_file(int fd);   //没有该文件
+    
+    void download_a_file_txt(int fd,FILE* file,const char* type);  //发送一个文本文件,参数可以决定发送形式，如javascript,css,.html
+    void download_a_file_binary(int fd,FILE* file);  //发送一个二进制文件
+    */
+private:
+    char buffer[line_limit];
+    
+    char method[line_limit] = {0};
+    char url[line_limit] = {0};
+    char version[line_limit] = {0};
+
+    unordered_map<string,string> http_head_kv;
+
+    char* body;
+};
+
+}
