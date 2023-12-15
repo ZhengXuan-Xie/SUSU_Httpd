@@ -42,7 +42,7 @@ timer.o:$(susu_timer)
 	$(CC) $(susu_timer) -o $(TEMP)timer.o
 
 test:$(susu_test) init_param.o log_printer.o
-	$(BUILD) -g ./test/test.cpp $(TEMP)init_param.o $(TEMP)log_printer.o $(TEMP)timer.o -o ./test.out  $(LD) $(susu_thread)
+	$(BUILD) -g ./test/test.cpp $(TEMP)init_param.o $(TEMP)log_printer.o $(TEMP)timer.o -o ./test/test.out  $(LD) $(susu_thread)
 
 .PHONY:clean
 clean:
