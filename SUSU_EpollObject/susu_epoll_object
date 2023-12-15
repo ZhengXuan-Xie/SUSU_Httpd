@@ -1,0 +1,57 @@
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <thread>
+
+#include <sys/epoll.h>
+
+#include <iostream>
+#include <string>
+using std::string;
+
+#include <unordered_set>
+using std::unordered_set;
+
+#include <mutex>
+using std::mutex;
+
+#include <queue>
+using std::queue;
+
+#include <vector>
+using std::vector;
+using std::iterator;
+
+#include <unordered_map>
+using std::unordered_map;
+
+
+#define MAX_EVENTS 1024*4
+    //可监听的事件数量4096
+    //在目前的设计中，连接进来的socket会被分配给多个epoll对象分别管理，每个对象分别运行在1个线程中。
+    //因此，最好不要让1个对象处理过多的请求
+    
+namespace susu_tools{
+class epoll_object{
+    public:
+        epoll_object(int limit);
+        ~epoll_object();
+
+        int get_current_event_count();
+        int get_event_limit();
+
+        int add_a_event(int fd);  //这个函数由上层调用，用于把1个文件描述符添加进epoll结构中。epoll_object对象一般不主动调用这个函数
+
+        void epoll_process();   //持续对管理的文件描述符fd进行epoll,并处理它们的请求。
+    private:
+        int epoll_fd;   //epoll结构的 句柄
+        int epoll_count;    //当前epoll结构正在管理的文件描述符的数量
+        int epoll_limit;    //可管理的文件描述符上限，一般不超过MAX_EVENTS这个宏。有时候可能会让event_limit比MAX_EVENTS小。
+        struct epoll_event EVENTS[MAX_EVENTS];   //epoll可容纳的事件队列
+                                                    //假定epoll_fd被绑定了数万个event，经过epoll，可能只有数千个event是有值的，此时这些event会被集中到EVENTS内
+                                                    //一般认为，EVENTS的数量上限就是 操作系统允许进程打开的文件描述符数量。在我的PC上，这个值已经被默认设置为1024*1024，因此此处不做改变。
+
+};
+
+}
