@@ -1,8 +1,8 @@
 BUILD=g++ -std=c++11 -pipe -O2 -Wall $(INCLUDE)
 CC=g++ -std=c++11 -pipe -O2 -c -Wall $(INCLUDE)
 LD = -pthread
-TARGET = -o $(BIN)example
-
+TARGET = -o $(BIN)SUSU_Httpd
+DEMO_TARGET = -o ./demo/demo.out
 TEMP=./temp_file/
 BIN=./bin/
 
@@ -20,7 +20,7 @@ susu_test=./test/*.cpp
 
 files=$(TEMP)susu_httpd.o $(susu_thread) $(TEMP)log_printer.o $(TEMP)epoll_object.o $(TEMP)http_object.o $(TEMP)init_param.o $(TEMP)timer.o
 
-example:susu_httpd.o log_printer.o epoll_object.o http_object.o init_param.o timer.o
+httpd_binary:susu_httpd.o log_printer.o epoll_object.o http_object.o init_param.o timer.o
 	$(BUILD) $(TARGET) $(LD) $(files)
 
 susu_httpd.o:susu_httpd.cpp
@@ -42,7 +42,10 @@ timer.o:$(susu_timer)
 	$(CC) $(susu_timer) -o $(TEMP)timer.o
 
 test:$(susu_test) init_param.o log_printer.o
-	$(BUILD) -g ./test/test.cpp $(TEMP)init_param.o $(TEMP)log_printer.o $(TEMP)timer.o -o ./test/test.out  $(LD) $(susu_thread)
+	$(BUILD) -g ./test/test.cpp $(TEMP)init_param.o $(TEMP)log_printer.o $(TEMP)timer.o -o ./test.out  $(LD) $(susu_thread)
+
+demo::susu_httpd.o log_printer.o epoll_object.o http_object.o init_param.o timer.o
+	$(BUILD) -g $(DEMO_TARGET) $(LD) $(files)
 
 .PHONY:clean
 clean:
