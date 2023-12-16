@@ -24,11 +24,11 @@ I hope to create a httpd for myself,so I begin to build SUSU_Httpd,just for fun.
 3.check your address and port.
 
 	
-4.if your address is 192.168.0.103,and susu_httpd is listening port 12345 you can use 
+4.if your address is 192.168.0.103 , and susu_httpd is listening port 12345 , you can use 
  	
   	192.168.0.103:12345
    
-   in your WebBroser,so you can see the demo web.like this
+   in your WebBroser, so you can see the demo web. like this
      
 <img width="584" alt="1702686947846" src="https://github.com/ZhengXuan-Xie/SUSU_Httpd/assets/121448413/8f221472-3eac-4618-8b69-fe78fcc41b25">
 
