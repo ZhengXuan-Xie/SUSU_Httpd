@@ -37,3 +37,8 @@ I hope to create a httpd for myself,so I begin to build SUSU_Httpd,just for fun.
 5.if you had run the demo build , you can use this code
 
 	make httpd_binary
+
+ # bug report
+
+if you find some bugs or just something make you unhappy, you can git me an issue.
+i will try to fix it.
