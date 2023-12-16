@@ -7,21 +7,21 @@ https://github.com/larryhe/tinyhttpd
 
 I hope to create a httpd for myself,so I begin to build SUSU_Httpd,just for fun.
 
-#how to use
+# how to use this httpd
 
-1.
-	use   make  to get susu_httpd,the binary name is example. 
-2.
-	set root_path in susu_httpd.conf
-3.
-	move the get.lua to the root_path
+1.use these code to build a demo
 
-4.
-	you can run the example.but you have no html、css、image.so the server is useless.
+	make demo
+	
+2.run the remo
 
-5.
-	add some html、css、images.
+	cd ./demo
+	
+	./run.sh
+	
+3.check your address and port.
 
-Tips.
-	because susu_httpd only have get.lua,so susu_httpd can only process GET request.
-	but it will support more function in the future.
+	
+4.if your address is 192.168.0.103,and susu_httpd is listening port 12345
+
+	you can use 192.168.0.103:12345 in your WebBroser,so you can see the demo web.
